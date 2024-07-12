@@ -1,0 +1,21 @@
+version: "3.6"
+services:
+  web:
+    image: "registry.gitlab.cn/omnibus/gitlab-jh:latest"
+    restart: always
+    hostname: "192.168.1.8"
+    environment:
+      GITLAB_OMNIBUS_CONFIG: 
+      # 有域名尽量使用域名
+        external_url 'http://192.168.1.8:10082'
+        gitlab_rails['gitlab_shell_ssh_port'] = 10083
+    env_file:
+      - .env
+    ports:
+      - "10082:10082"
+      - "10083:22"
+    volumes:
+      - "$GITLAB_HOME/config:/etc/gitlab"
+      - "$GITLAB_HOME/logs:/var/log/gitlab"
+      - "$GITLAB_HOME/data:/var/opt/gitlab"
+    shm_size: "512m"

@@ -1,0 +1,47 @@
+version: "3.8"
+
+services:
+  rn1:
+    image: mysql:8.0.22
+    ports:
+      - 9003:3306
+    environment:
+      - MYSQL_MASTER_PORT=3306
+      - MYSQL_ROOT_PASSWORD=abc123456
+    volumes:
+      - rnv1:/var/lib/mysql
+      - rnconf1:/etc/mysql/conf.d
+    privileged: true
+    networks:
+      - swarm_mysql
+  rn2:
+    image: mysql:8.0.22
+    ports:
+      - 9004:3306
+    environment:
+      - MYSQL_MASTER_PORT=3306
+      - MYSQL_ROOT_PASSWORD=abc123456
+    volumes:
+      - rnv2:/var/lib/mysql
+      - rnconf2:/etc/mysql/conf.d
+    privileged: true
+    networks:
+      - swarm_mysql
+
+volumes:
+  rnv1:
+    driver: local
+    name: rnv1
+  rnconf1:
+    driver: local
+    name: rnconf1
+  rnv2:
+    driver: local
+    name: rnv2
+  rnconf2:
+    driver: local
+    name: rnconf2
+
+networks:
+  swarm_mysql:
+    external: true

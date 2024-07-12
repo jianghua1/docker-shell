@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  portainer:
+    image: portainer/portainer-ce:latest
+    restart: always
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+    ports:
+      - 9000:9000
+    environment:
+      - DOCKER_HOST=tcp://192.168.1.6:2375
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /path/to/portainer_data:/data

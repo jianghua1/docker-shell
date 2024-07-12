@@ -1,0 +1,52 @@
+version: "3.9"
+
+services:
+
+  jenkins-docker:
+    # arm架构
+    # image: arm64v8/docker:dind
+    # x86架构
+    image: docker:dind
+    container_name: jenkins-docker
+    privileged: true
+    networks:
+      jenkins:
+        aliases:
+          - docker
+    environment:
+      - DOCKER_TLS_CERTDIR=/certs
+    volumes:
+      - jenkins-docker-certs:/certs/client
+      - jenkins-data:/var/jenkins_home
+
+  jenkins-blueocean:
+    image: jenkins:2.419-docker
+    container_name: jenkins-blueocean
+    restart: on-failure
+    networks:
+      - jenkins
+    environment:
+      - DOCKER_HOST=tcp://docker:2376
+      - DOCKER_CERT_PATH=/certs/client
+      - DOCKER_TLS_VERIFY=1
+    volumes:
+      - jenkins-data:/var/jenkins_home
+      - jenkins-docker-certs:/certs/client:ro
+      - /tmp:/tmp
+    ports:
+      - "10050:8080"
+      - "50000:50000"
+
+networks:
+  jenkins:
+    external: true
+
+
+volumes:
+  jenkins-docker-certs:
+  jenkins-data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/jenkins/data
+      o: bind
